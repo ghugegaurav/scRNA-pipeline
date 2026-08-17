@@ -1,0 +1,39 @@
+########################################################################
+# Conda environment for the scRNA-seq Teaching Pipeline
+#
+# Create it with:
+#   conda env create -f environment.yml
+# Update it after editing this file with:
+#   conda env update -f environment.yml --prune
+#
+# All conda packages come from the conda-forge / bioconda channels
+# (both are official, actively maintained community channels).
+########################################################################
+name: scrna-teaching
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.10
+  - numpy
+  - pandas
+  - scipy
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  - jupyterlab
+  - ipykernel
+  - ipywidgets
+  - scanpy>=1.10          # flavor="igraph" for sc.tl.leiden requires >=1.10
+  - anndata
+  - python-igraph
+  - leidenalg
+  - umap-learn
+  - pyyaml
+  - requests
+  - pip
+  - pip:
+      - scrublet>=0.2.3       # doublet detection (PyPI: https://pypi.org/project/scrublet/)
+      - harmonypy>=2.0.0      # Harmony batch correction (PyPI: https://pypi.org/project/harmonypy/)
+      - bbknn>=1.6.0          # BBKNN batch correction (PyPI: https://pypi.org/project/bbknn/)
+      - celltypist>=1.7.1     # automated cell type annotation (PyPI: https://pypi.org/project/celltypist/)

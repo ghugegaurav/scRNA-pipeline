@@ -1,0 +1,68 @@
+########################################################################
+# Configuration for the scRNA-seq Teaching Pipeline
+# Change values here instead of editing the scripts.
+########################################################################
+
+# Which dataset to run the pipeline on:
+#   "pbmc3k"        -> real 10x Genomics droplet scRNA-seq data (raw UMI counts).
+#                      Auto-downloaded by scanpy from 10x Genomics' own servers.
+#                      Every teaching step (mito/ribo/hb QC, doublets, etc.) applies.
+#   "github_sample" -> the sample dataset from the course GitHub repo
+#                      (GiatrasKon/scRNAseq-Analysis-Pipeline: data/RNA-seq.csv.gz).
+#                      This is 137 cells x 54,675 Affymetrix microarray probes,
+#                      already log2-normalized -- NOT raw UMI counts. Steps that
+#                      require raw counts or gene symbols (mito/ribo/hb %, Scrublet
+#                      doublet detection) are automatically skipped with an
+#                      explanation printed to the console/notebook.
+dataset: "pbmc3k"
+
+github_sample:
+  repo_url: "https://github.com/GiatrasKon/scRNAseq-Analysis-Pipeline"
+  raw_csv_gz_url: "https://raw.githubusercontent.com/GiatrasKon/scRNAseq-Analysis-Pipeline/main/data/RNA-seq.csv.gz"
+  raw_labels_url: "https://raw.githubusercontent.com/GiatrasKon/scRNAseq-Analysis-Pipeline/main/data/labels.csv"
+
+paths:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  figures_dir: "results/figures"
+  tables_dir: "results/tables"
+
+# --- Quality control ---
+qc:
+  mad_nmads: 5              # outlier threshold: median +/- nmads * MAD (slide: "What is MAD?")
+  max_pct_mt: 20             # hard cap on % mitochondrial reads (slide: "10-20% mitochondrial reads")
+  min_genes_per_cell: 200
+  min_cells_per_gene: 3
+
+# --- Doublet detection (Scrublet) ---
+doublets:
+  expected_doublet_rate: 0.06
+
+# --- Normalization ---
+normalize:
+  target_sum: 1.0e4          # slide: sc.pp.normalize_total(adata, target_sum=1e4)
+
+# --- Highly variable genes ---
+hvg:
+  n_top_genes: 2000
+  flavor: "seurat"
+
+# --- PCA / neighbors / UMAP ---
+dimred:
+  n_pcs: 30
+  n_neighbors: 15
+
+# --- Clustering ---
+clustering:
+  resolution: 1.0             # slide: "Low resolution (0.05) -> few clusters, High (2.0) -> many clusters"
+
+# --- Batch correction demo ---
+# pbmc3k has no real batch variable, so the pipeline creates a synthetic
+# 2-batch split purely to demonstrate BBKNN vs Harmony mechanics, and says so.
+batch_correction:
+  method: "harmony"          # "harmony", "bbknn", or "none"
+
+# --- Cell type annotation ---
+annotation:
+  run_celltypist: false       # set true to also run automated CellTypist annotation
+  celltypist_model: "Immune_All_Low.pkl"   # downloaded automatically by celltypist on first use

@@ -1,0 +1,12 @@
+# Force LF line endings for anything executed inside WSL/Linux, regardless
+# of the cloning machine's platform or git autocrlf setting -- CRLF line
+# endings break bash's shebang line ("bad interpreter" errors) and can
+# corrupt shell control flow even when invoked as `bash script.sh`.
+*.sh text eol=lf
+*.py text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.md text eol=lf
+.gitignore text eol=lf
+.gitattributes text eol=lf
+*.ipynb text eol=lf
