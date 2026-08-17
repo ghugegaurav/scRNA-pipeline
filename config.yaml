@@ -40,7 +40,10 @@ doublets:
 
 # --- Normalization ---
 normalize:
-  target_sum: 1.0e4          # slide: sc.pp.normalize_total(adata, target_sum=1e4)
+  target_sum: 10000          # slide: sc.pp.normalize_total(adata, target_sum=1e4)
+                              # (written as a plain integer, not "1.0e4" -- YAML's float
+                              # parser requires an explicit sign after 'e' (e.g. 1.0e+4),
+                              # so "1.0e4" silently parses as the STRING "1.0e4" instead)
 
 # --- Highly variable genes ---
 hvg:

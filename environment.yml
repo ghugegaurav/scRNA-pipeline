@@ -32,8 +32,16 @@ dependencies:
   - pyyaml
   - requests
   - pip
+  - c-compiler             # provides gcc; scrublet's "annoy" dependency has no prebuilt
+  - cxx-compiler           # wheel and must compile from source via pip below
   - pip:
       - scrublet>=0.2.3       # doublet detection (PyPI: https://pypi.org/project/scrublet/)
-      - harmonypy>=2.0.0      # Harmony batch correction (PyPI: https://pypi.org/project/harmonypy/)
+      - harmonypy>=0.2.0      # Harmony batch correction (PyPI: https://pypi.org/project/harmonypy/).
+                              # scripts/09_batch_correction.py calls harmonypy directly
+                              # (not via sc.external.pp.harmony_integrate) and detects the
+                              # Z_corr orientation at runtime, since that orientation has
+                              # changed across harmonypy releases -- confirmed by running
+                              # this pipeline against 0.2.0, where scanpy's wrapper (which
+                              # assumes the old orientation) mis-transposes the result.
       - bbknn>=1.6.0          # BBKNN batch correction (PyPI: https://pypi.org/project/bbknn/)
       - celltypist>=1.7.1     # automated cell type annotation (PyPI: https://pypi.org/project/celltypist/)

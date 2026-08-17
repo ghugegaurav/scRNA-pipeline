@@ -45,8 +45,26 @@ def main():
               "from real sample/lane/run metadata.")
 
     if method == "harmony":
-        sc.external.pp.harmony_integrate(adata, key="batch")
+        # Called directly (rather than via sc.external.pp.harmony_integrate) because
+        # harmonypy has changed the orientation of its Z_corr output across versions
+        # (PCs x cells in older releases, cells x PCs in newer ones); scanpy's wrapper
+        # assumes the old orientation and mis-transposes on newer harmonypy, corrupting
+        # the embedding shape. Detecting the orientation from the known cell count
+        # avoids depending on which harmonypy version is installed.
+        import harmonypy
+
         rep = "X_pca_harmony"
+        harmony_out = harmonypy.run_harmony(adata.obsm["X_pca"], adata.obs, ["batch"])
+        z_corr = np.asarray(harmony_out.Z_corr)
+        if z_corr.shape[0] == adata.n_obs:
+            adata.obsm[rep] = z_corr
+        elif z_corr.shape[1] == adata.n_obs:
+            adata.obsm[rep] = z_corr.T
+        else:
+            raise ValueError(
+                f"harmonypy returned Z_corr with shape {z_corr.shape}, which doesn't "
+                f"match {adata.n_obs} cells on either axis."
+            )
         print(f"  Harmony-adjusted PCA embedding stored in adata.obsm['{rep}']")
     elif method == "bbknn":
         import scanpy.external as sce
